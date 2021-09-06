@@ -1,0 +1,8 @@
+-Controller nhận DTO > Service chuyển DTO thành model hoặc entity, rồi xử lý > Repository nhận Entity đưa vào DB
+
+-Repository lấy từ DB ra Entity > Service xử lý sao đó rồi thành DTO > Controller và trả về DTO
+
+-Service sẽ thực hiện mapping sang DTO và ngược lại, controller chỉ nhận DTO
+
+-Nguyên tắc chung là việc mapping luôn được thực hiện ở rìa của code (edge). Nghĩa là nếu mapping trong service thì việc chuyển 
+đổi phải luôn nằm ở đầu, hoặc ở cuối cùng method khi chúng được xử lý.
