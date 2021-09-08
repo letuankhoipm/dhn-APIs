@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DeadlineNote.Dtos;
 using DeadlineNote.Entities;
 using DeadlineNote.Repositories;
@@ -21,17 +22,17 @@ namespace DeadlineNote.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<UserDto> GetUsers()
+        public async Task<IEnumerable<UserDto>> GetUsersAsync()
         {
-            var users = repository.GetUsers();
+            var users = await repository.GetUsersAsync();
             var userTransferred = users.Select(user => user.AsDto());
             return userTransferred;
         }
 
         [HttpGet("{id}")]
-        public ActionResult<UserDto> GetUser(Guid id)
+        public async Task<ActionResult<UserDto>> GetUserAsync(Guid id)
         {
-            var user = repository.GetUser(id);
+            var user = await repository.GetUserAsync(id);
 
             if (user is null)
             {
@@ -41,7 +42,7 @@ namespace DeadlineNote.Controllers
         }
 
         [HttpPost]
-        public ActionResult<CreateUserDto> CreateUser(CreateUserDto userDto)
+        public async Task<ActionResult<CreateUserDto>> CreateUserAsync(CreateUserDto userDto)
         {
             User user = new()
             {
@@ -51,14 +52,14 @@ namespace DeadlineNote.Controllers
                 createdDate = DateTimeOffset.UtcNow
             };
 
-            repository.CreateUser(user);
-            return CreatedAtAction(nameof(GetUser), new { id = user.id }, user.AsDto());
+            await repository.CreateUserAsync(user);
+            return CreatedAtAction(nameof(GetUserAsync), new { id = user.id }, user.AsDto());
         }
 
         [HttpPut("{id}")]
-        public ActionResult<CreateUserDto> UpdateUser(Guid id, UpdateUserDto userDto)
+        public async Task<ActionResult<CreateUserDto>> UpdateUserAsync(Guid id, UpdateUserDto userDto)
         {
-            var existUser = repository.GetUser(id);
+            var existUser = await repository.GetUserAsync(id);
             if (existUser is null)
             {
                 return NotFound();
@@ -70,22 +71,22 @@ namespace DeadlineNote.Controllers
                 username = userDto.username
             };
 
-            repository.UpdateUser(updatedUser);
+            await repository.UpdateUserAsync(updatedUser);
             return NoContent();
 
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<Guid> DeleteUser(Guid id)
+        public async Task<ActionResult<Guid>> DeleteUserAsync(Guid id)
         {
-            var existUser = repository.GetUser(id);
+            var existUser = await repository.GetUserAsync(id);
 
             if (existUser is null)
             {
                 return NotFound();
             }
 
-            repository.DeleteUser(id);
+            await repository.DeleteUserAsync(id);
             return NoContent();
         }
     }

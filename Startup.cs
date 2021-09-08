@@ -40,7 +40,10 @@ namespace dnl_api
                 return new MongoClient(settings.ConnectionString);
             });
             services.AddSingleton<IUserRepository, MongoDbUserRepository>();
-            services.AddControllers();
+            services.AddControllers(opts =>
+            {
+                opts.SuppressAsyncSuffixInActionNames = false;
+            });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "dnl_api", Version = "v1" });

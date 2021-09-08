@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DeadlineNote.Entities;
 
 namespace DeadlineNote.Repositories
 {
     public interface IUserRepository
     {
-        User GetUser(Guid id);
-        IEnumerable<User> GetUsers();
+        Task<User> GetUserAsync(Guid id);
+        Task<IEnumerable<User>> GetUsersAsync();
 
-        void CreateUser(User user);
-        void UpdateUser(User user);
-        void DeleteUser(Guid id);
+        Task CreateUserAsync(User user);
+        Task UpdateUserAsync(User user);
+        Task DeleteUserAsync(Guid id);
     }
 }

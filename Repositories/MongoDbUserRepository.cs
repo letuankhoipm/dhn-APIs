@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DeadlineNote.Entities;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -19,32 +20,32 @@ namespace DeadlineNote.Repositories
             usersConnection = database.GetCollection<User>(collectionName);
         }
 
-        public void CreateUser(User user)
+        public async Task CreateUserAsync(User user)
         {
-            usersConnection.InsertOne(user);
+            await usersConnection.InsertOneAsync(user);
         }
 
-        public void DeleteUser(Guid id)
-        {
-            var filter = filterBuilder.Eq(user => user.id, id);
-            usersConnection.DeleteOne(filter);
-        }
-
-        public User GetUser(Guid id)
+        public async Task DeleteUserAsync(Guid id)
         {
             var filter = filterBuilder.Eq(user => user.id, id);
-            return usersConnection.Find(filter).SingleOrDefault();
+            await usersConnection.DeleteOneAsync(filter);
         }
 
-        public IEnumerable<User> GetUsers()
+        public async Task<User> GetUserAsync(Guid id)
         {
-            return usersConnection.Find(new BsonDocument()).ToList();
+            var filter = filterBuilder.Eq(user => user.id, id);
+            return await usersConnection.Find(filter).SingleOrDefaultAsync();
         }
 
-        public void UpdateUser(User user)
+        public async Task<IEnumerable<User>> GetUsersAsync()
+        {
+            return await usersConnection.Find(new BsonDocument()).ToListAsync();
+        }
+
+        public async Task UpdateUserAsync(User user)
         {
             var filter = filterBuilder.Eq(existUser => existUser.id, user.id);
-            usersConnection.ReplaceOne(filter, user);
+            await usersConnection.ReplaceOneAsync(filter, user);
         }
     }
 
