@@ -34,10 +34,12 @@ namespace dnl_api
         {
             BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
             BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
+            var mongoDbSettings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+
             services.AddSingleton<IMongoClient>(ServiceProvider =>
             {
-                var settings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
-                return new MongoClient(settings.ConnectionString);
+
+                return new MongoClient(mongoDbSettings.ConnectionString);
             });
             services.AddSingleton<IUserRepository, MongoDbUserRepository>();
             services.AddControllers(opts =>
@@ -48,6 +50,9 @@ namespace dnl_api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "dnl_api", Version = "v1" });
             });
+
+            services.AddHealthChecks()
+            .AddMongoDb(mongoDbSettings.ConnectionString, name: "mongodb", timeout: TimeSpan.FromSeconds(3));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +65,10 @@ namespace dnl_api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "dnl_api v1"));
             }
 
-            app.UseHttpsRedirection();
+            if (env.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
 
@@ -69,6 +77,7 @@ namespace dnl_api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health");
             });
         }
     }

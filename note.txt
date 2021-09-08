@@ -6,3 +6,5 @@
 
 -Nguyên tắc chung là việc mapping luôn được thực hiện ở rìa của code (edge). Nghĩa là nếu mapping trong service thì việc chuyển 
 đổi phải luôn nằm ở đầu, hoặc ở cuối cùng method khi chúng được xử lý.
+
+-dotnet add package AspNetCore.HealthChecks.MongoDb
